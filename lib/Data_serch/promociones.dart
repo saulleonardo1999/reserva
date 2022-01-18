@@ -150,7 +150,7 @@ class _PromocionState extends State<Promocion> with SingleTickerProviderStateMix
                       ],
                       );
                       });}:(){
-                      inicio.setUbucacion(localizacion);
+                      // inicio.setUbucacion(localizacion);
                       inicio.cambiarPagina(2);
                       Navigator.of(context).pop();
                         },child: Icon(Icons.location_on,color: Colors.black,size: 30,),padding: EdgeInsets.only()),

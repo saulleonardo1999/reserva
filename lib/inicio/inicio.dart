@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:newapp366/inicio/servicios.dart';
 import 'package:newapp366/inicio/configuracion.dart';
 import 'package:newapp366/inicio/ubicacion.dart';
+import 'package:newapp366/inicio/ubicacion/views/mapa_page.dart';
 import 'package:newapp366/src/repository/users_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:newapp366/UbicacionBloc/DirectionProvider.dart';
@@ -28,7 +29,7 @@ class InicioState extends State<Inicio> {
   String get imagen => widget.imagen;
   int currentIndex=0;
   UserRepository get _userRepository => widget._userRepository;
-  Ubicacion ubicacion=new Ubicacion();
+  MapaPage ubicacion=new MapaPage();
 
   @override
   void initState() {
@@ -74,9 +75,9 @@ class InicioState extends State<Inicio> {
       currentIndex=index;     
     });
   }
-  void setUbucacion(GeoPoint localizacion){
-    setState(() {
-      ubicacion=new Ubicacion(localizacion: localizacion,);
-    });
-  }
+  // void setUbucacion(GeoPoint localizacion){
+  //   setState(() {
+  //     ubicacion=new Ubicacion(localizacion: localizacion,);
+  //   });
+  // }
 }
