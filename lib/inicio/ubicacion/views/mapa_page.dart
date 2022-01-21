@@ -18,21 +18,17 @@ class _MapaPageState extends State<MapaPage> {
   String _title = "Mapa";
   Set<Polyline> polylines = Set<Polyline>();
   Set<Marker> markers = Set<Marker>();
-  LatLng position = new LatLng(23.8524981, -103.1033665);
-  LatLng technicianPosition;
+  LatLng position = new LatLng(23.8524981, -103.1033665), _actualPlacePosition;
   Position currentLocation;
-  String lat, lng;
   LocationSettings locationOptions =
       LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 5);
   String _geoHash;
 
   StreamSubscription _getPositionSubscription;
   bool loading;
-  List<Ubicacion> myCases;
-  int indexCases;
+  List<Ubicacion> myLocals;
   PolylinePoints polylinePoints = PolylinePoints();
   String linkImage = "";
-  BitmapDescriptor lost, rescue, seen;
 
   _getLocation() async {
     LatLng coordinates;
@@ -54,8 +50,6 @@ class _MapaPageState extends State<MapaPage> {
         desiredAccuracy: LocationAccuracy.best);
 
     setState(() {
-      lat = (currentLocation.latitude).toString();
-      lng = (currentLocation.longitude).toString();
       position = LatLng(currentLocation.latitude, currentLocation.longitude);
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target: position, zoom: 13)));
@@ -68,19 +62,16 @@ class _MapaPageState extends State<MapaPage> {
           if (newGeoHash != _geoHash) {
             setState(() {
               _geoHash = newGeoHash;
-              lat = (positions.latitude).toString();
-              lng = (positions.longitude).toString();
               position =
                   LatLng(currentLocation.latitude, currentLocation.longitude);
             });
           }
 
           position = new LatLng(positions.latitude, positions.longitude);
-
+          if(_actualPlacePosition != null){
+            setPolylines(fromPoint: position, toPoint:  _actualPlacePosition);
+          }
           coordinates = LatLng(position.latitude, position.longitude);
-          // mapController.animateCamera(CameraUpdate.newCameraPosition(
-          //     CameraPosition(target: position, zoom: 16))
-          // );
           return coordinates;
         });
   }
@@ -92,11 +83,9 @@ class _MapaPageState extends State<MapaPage> {
   @override
   void initState() {
     loading = true;
-    indexCases = 1;
     _getLocation();
     UbicacionService().getCases().then((value) {
-      print(value);
-      myCases = value;
+      myLocals = value;
       fillMarkers();
       loading = false;
       setState(() {});
@@ -106,7 +95,7 @@ class _MapaPageState extends State<MapaPage> {
 
   fillMarkers() {
     markers.clear();
-    myCases.forEach((element) {
+    myLocals.forEach((element) {
       setState(() {
         Marker resultMarker = Marker(
           markerId: MarkerId(element.fields.nombre.stringValue.toString()),
@@ -114,17 +103,18 @@ class _MapaPageState extends State<MapaPage> {
             setState(() {
               _title = element.fields.nombre.stringValue;
               LatLng point = LatLng(
-                  double.tryParse(element.fields.latitud.stringValue),
-                  double.tryParse(element.fields.longitud.stringValue));
+                  element.fields.coordenadas.geoPointValue.latitude,
+                  element.fields.coordenadas.geoPointValue.longitude
+              );
               setPolylines(fromPoint: position, toPoint: point);
               LatLngBounds bounds = goToCenter(position, point);
               mapController
                   .animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
-              linkImage = element.fields.img.stringValue;
             });
           },
-          position: LatLng(double.tryParse(element.fields.latitud.stringValue),
-              double.tryParse(element.fields.longitud.stringValue)),
+          position: LatLng(element.fields.coordenadas.geoPointValue.latitude,
+              element.fields.coordenadas.geoPointValue.longitude
+          ),
         );
         markers.add(resultMarker);
       });
@@ -183,7 +173,7 @@ class _MapaPageState extends State<MapaPage> {
     try {
       List<LatLng> polylineCoordenadas = [];
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          "AIzaSyBDoe8OJhh5ceL0Z2vt2g6LVtS6zfBktE8",
+          "AIzaSyDYazIDcRaS6gzSTTDueTZ0Fb9kEsY43mU",
           PointLatLng(fromPoint.latitude, fromPoint.longitude),
           PointLatLng(toPoint.latitude, toPoint.longitude));
       print("Resultado " + result.points.toString());
@@ -201,8 +191,11 @@ class _MapaPageState extends State<MapaPage> {
             width: 4,
             polylineId: PolylineId("polyLine"),
             color: Colors.deepPurple,
-            points: polylineCoordenadas));
+            points: polylineCoordenadas)
+        );
       });
+      // await Future.delayed(Duration(seconds: 5));
+      // setPolylines(fromPoint: LatLng(fromPoint.latitude + 0.005, fromPoint.longitude - 0.005), toPoint: toPoint);
     } catch (e) {
       print(e);
     }

@@ -38,44 +38,108 @@ class Ubicacion {
 
 class Fields {
   Fields({
-    this.longitud,
+    this.apellidos,
+    this.aprobado,
+    this.categoria,
     this.nombre,
-    this.latitud,
-    this.img,
+    this.correo,
+    this.coordenadas,
+    this.fieldsNombre,
   });
 
-  StringValue longitud;
-  StringValue nombre;
-  StringValue latitud;
-  StringValue img;
+  Apellidos apellidos;
+  Aprobado aprobado;
+  Apellidos categoria;
+  Apellidos nombre;
+  Apellidos correo;
+  Coordenadas coordenadas;
+  Apellidos fieldsNombre;
 
   factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-    longitud: StringValue.fromJson(json["longitud"]),
-    nombre: StringValue.fromJson(json["nombre"]),
-    latitud: StringValue.fromJson(json["latitud"]),
-    img: StringValue.fromJson(json["img"]),
+    apellidos: Apellidos.fromJson(json["Apellidos"]),
+    aprobado: Aprobado.fromJson(json["Aprobado"]),
+    categoria: Apellidos.fromJson(json["Categoria"]),
+    nombre: Apellidos.fromJson(json["Nombre"]),
+    correo: Apellidos.fromJson(json["Correo"]),
+    coordenadas: Coordenadas.fromJson(json["coordenadas"]),
+    fieldsNombre: Apellidos.fromJson(json["nombre"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "longitud": longitud.toJson(),
-    "nombre": nombre.toJson(),
-    "latitud": latitud.toJson(),
-    "img": img.toJson(),
+    "Apellidos": apellidos.toJson(),
+    "Aprobado": aprobado.toJson(),
+    "Categoria": categoria.toJson(),
+    "Nombre": nombre.toJson(),
+    "Correo": correo.toJson(),
+    "coordenadas": coordenadas.toJson(),
+    "nombre": fieldsNombre.toJson(),
   };
 }
 
-class StringValue {
-  StringValue({
+class Apellidos {
+  Apellidos({
     this.stringValue,
   });
 
   String stringValue;
 
-  factory StringValue.fromJson(Map<String, dynamic> json) => StringValue(
+  factory Apellidos.fromJson(Map<String, dynamic> json) => Apellidos(
     stringValue: json["stringValue"],
   );
 
   Map<String, dynamic> toJson() => {
     "stringValue": stringValue,
+  };
+}
+
+class Aprobado {
+  Aprobado({
+    this.booleanValue,
+  });
+
+  bool booleanValue;
+
+  factory Aprobado.fromJson(Map<String, dynamic> json) => Aprobado(
+    booleanValue: json["booleanValue"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "booleanValue": booleanValue,
+  };
+}
+
+class Coordenadas {
+  Coordenadas({
+    this.geoPointValue,
+  });
+
+  GeoPointValue geoPointValue;
+
+  factory Coordenadas.fromJson(Map<String, dynamic> json) => Coordenadas(
+    geoPointValue: GeoPointValue.fromJson(json["geoPointValue"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "geoPointValue": geoPointValue.toJson(),
+  };
+}
+
+class GeoPointValue {
+  GeoPointValue({
+    this.latitude,
+    this.longitude,
+  });
+
+  double latitude;
+  double longitude;
+
+  factory GeoPointValue.fromJson(Map<String, dynamic> json) => GeoPointValue(
+    latitude: json["latitude"].toDouble(),
+    longitude: json["longitude"].toDouble(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "latitude": latitude,
+    "longitude": longitude,
   };
 }
